@@ -8,3 +8,7 @@ videos/
 wandb/
 test_log.csv
 *.egg-info
+# experiment outputs: regenerated, copy with scp/rsync
+scratch/results/
+scratch/figures/
+*.pdf
