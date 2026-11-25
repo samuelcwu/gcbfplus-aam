@@ -31,5 +31,6 @@ python -m pip install "git+https://github.com/oswinso/jaxproxqp.git"
 python -m pip install -e .
 
 echo
-echo "Installed. jax sees (login nodes have no GPU, so CPU here is expected):"
-python -c "import jax; print(jax.__version__, jax.devices())"
+echo "Installed. Quick import check (no jax device init: login nodes cap threads per user, and initializing the jax"
+echo "CPU backend there can abort with 'pthread_create() failed'; the job log shows the GPU device instead):"
+python -c "import jax, flax, optax, jaxproxqp, gcbfplus; print('jax', jax.__version__, '- imports OK')"

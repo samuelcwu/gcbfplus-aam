@@ -48,10 +48,14 @@ FRAME_STRIDE = int(os.environ.get("FRAME_STRIDE", 2))  # render every FRAME_STRI
 N_STILLS = 4  # still-frame check figure: the steps where agent AGENT's own h is lowest (its close encounters)
 STILL_SEP = 60  # minimum steps between stills
 
+# Full float32 matmuls. On recent NVIDIA GPUs jax's default float32 matmul precision uses TF32 (~1e-3 relative error),
+# which makes GPU results drift from CPU / Mac runs; "highest" keeps them comparable at negligible cost here.
+jax.config.update("jax_default_matmul_precision", os.environ.get("JAX_MATMUL_PRECISION", "highest"))
+
 with open(MODEL_PATH / "config.yaml", "r") as f:
     config = yaml.load(f, Loader=yaml.UnsafeLoader)
 print(f"jax {jax.__version__} on {jax.devices()}; episode {EPISODE}, agent {AGENT}, grid {N_GRID}, "
-      f"stride {FRAME_STRIDE}")
+      f"stride {FRAME_STRIDE}; matmul precision {jax.config.jax_default_matmul_precision}")
 
 
 # %% env + algo (as in scratch/di_noise_sweep_videos.py)
@@ -208,6 +212,7 @@ for j, kk in enumerate(STILL_STEPS):
 fig.colorbar(im, ax=axs[1, :], shrink=0.9, label=f"h_{AGENT}")
 fig.suptitle(f"Episode {EPISODE}, sigma = 0: barrier field of agent {AGENT} at its {len(STILL_STEPS)} lowest-h moments"
              f"\n{LEGEND}", fontsize=11)
+FIG_DIR.mkdir(parents=True, exist_ok=True)  # scratch/figures/ is gitignored, so a fresh clone does not have it
 still_path = FIG_DIR / f"cbf_field_epi{EPISODE:03}_agent{AGENT}_s0.000_stills.png"
 fig.savefig(still_path, dpi=100, bbox_inches="tight")
 print("saved", still_path)

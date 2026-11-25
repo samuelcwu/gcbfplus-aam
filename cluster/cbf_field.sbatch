@@ -8,7 +8,7 @@
 # Lines starting with #SBATCH are options for the scheduler (same as passing them to sbatch on the command line):
 #SBATCH --job-name=cbf_field
 #SBATCH --partition=mit_normal_gpu
-#SBATCH --gres=gpu:1
+#SBATCH --gpus=l40s:1   # same as -G l40s:1 (ORCD docs); L40S is plenty here and queues faster than H200
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=32G
 #SBATCH --time=01:00:00
